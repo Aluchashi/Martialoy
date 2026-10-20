@@ -1,0 +1,24 @@
+{
+  "region": "jezero",
+  "label": "Jezero Crater",
+  "bbox": [77.38, 18.34, 77.72, 18.58],
+  "center": [77.58, 18.44],
+  "basemap": {
+    "file": "basemap.pmtiles",
+    "type": "raster",
+    "tileSize": 256,
+    "attribution": "NASA Mars Trek"
+  },
+  "dem": {
+    "file": "jezero_dem.tif",
+    "crs": "IAU_2015:104903",
+    "latitude_type": "planetocentric",
+    "vertical_datum": "Mars areoid",
+    "resolution_m": 25,
+    "nodata": -32768
+  },
+  "sources": [
+    { "name": "NASA Mars Trek", "url": "https://trek.nasa.gov/mars/" },
+    { "name": "NASA Planetary Data System", "url": "https://pds.nasa.gov/" }
+  ]
+}

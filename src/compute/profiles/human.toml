@@ -1,0 +1,92 @@
+# Martialoy human profile.
+# Two ledgers, never merged: suit electrical Wh and metabolic kcal.
+id = "human"
+label = "Human"
+tagline = "Suited astronaut · 8 h excursion"
+description = "Two ledgers, never merged: suit electrical energy (Wh) and metabolic effort (kcal). The suit battery and the excursion clock are both hard limits."
+formula = "E_suit = 100 W · t + (200 kg · 3.721 m/s² · climb) / 0.25   ·   E_met = 300 W · t + m·g·climb / 0.25 → kcal"
+
+[constants]
+system_mass_kg = 200.0
+max_speed_mps = 0.9
+base_power_w = 100.0
+drive_efficiency = 0.25
+max_slope_deg = 25.0
+energy_budget_wh = 1200.0
+duration_budget_h = 8.0
+speed_derate = 0.6
+min_speed_fraction = 0.35
+spacing_m = 25.0
+
+[secondary]
+label = "Metabolic"
+base_power_w = 300.0
+efficiency = 0.25
+unit = "kcal"
+
+[[assumptions]]
+key = "mass"
+label = "System mass (crew + suit)"
+value = "200"
+unit = "kg"
+source = "80 kg crew + 120 kg suit/PLSS — NASA spacesuit references (draft)"
+source_url = "https://www.nasa.gov/humans-in-space/spacesuits/"
+
+[[assumptions]]
+key = "speed"
+label = "Suited walk speed"
+value = "0.9"
+unit = "m/s"
+source = "Apollo surface-mobility analog"
+source_url = "https://www.nasa.gov/the-apollo-program/"
+
+[[assumptions]]
+key = "power"
+label = "Suit base power"
+value = "100"
+unit = "W"
+source = "PLSS electrical load — engineering estimate"
+source_url = "https://www.nasa.gov/humans-in-space/spacesuits/"
+
+[[assumptions]]
+key = "energy"
+label = "Suit battery"
+value = "1,200"
+unit = "Wh"
+source = "8 h excursion allocation — engineering estimate"
+
+[[assumptions]]
+key = "slope"
+label = "Slope limit"
+value = "25"
+unit = "°"
+source = "Suited walking limit, conservative"
+
+[[assumptions]]
+key = "duration"
+label = "Excursion limit"
+value = "8"
+unit = "h"
+source = "Suit consumables allocation"
+
+[[assumptions]]
+key = "metabolic"
+label = "Metabolic rate, walking"
+value = "300"
+unit = "W"
+source = "NASA metabolic references (draft)"
+source_url = "https://www.nasa.gov/humans-in-space/spacesuits/"
+
+[[assumptions]]
+key = "body"
+label = "Body climb efficiency"
+value = "25"
+unit = "%"
+source = "Engineering estimate — docs/references.md"
+
+[[assumptions]]
+key = "derate"
+label = "Uphill speed derate"
+value = "60"
+unit = "% at limit"
+source = "Model assumption"

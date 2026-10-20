@@ -1,0 +1,79 @@
+# Martialoy rover profile.
+# Every value here is served to the UI. Keep the citation next to the number.
+id = "rover"
+label = "Rover"
+tagline = "Perseverance-class · RTG powered"
+description = "Electrical ledger only. The rover drives itself; every watt comes from the RTG and the battery. Slope is the hard constraint."
+formula = "E = 110 W · t + (1025 kg · 3.721 m/s² · climb) / 0.45"
+
+[constants]
+system_mass_kg = 1025.0
+max_speed_mps = 0.042
+base_power_w = 110.0
+drive_efficiency = 0.45
+max_slope_deg = 20.0
+energy_budget_wh = 5000.0
+duration_budget_h = 48.0
+speed_derate = 0.55
+min_speed_fraction = 0.25
+spacing_m = 25.0
+
+[[assumptions]]
+key = "mass"
+label = "System mass"
+value = "1,025"
+unit = "kg"
+source = "NASA Perseverance rover"
+source_url = "https://science.nasa.gov/mission/mars-2020-perseverance/"
+
+[[assumptions]]
+key = "speed"
+label = "Maximum speed"
+value = "4.2"
+unit = "cm/s"
+source = "NASA/JPL Mars 2020 rover"
+source_url = "https://mars.nasa.gov/mars2020/spacecraft/rover/"
+
+[[assumptions]]
+key = "power"
+label = "Base electrical draw"
+value = "110"
+unit = "W"
+source = "MMRTG output, NASA Mars 2020"
+source_url = "https://science.nasa.gov/mission/mars-2020-perseverance/"
+
+[[assumptions]]
+key = "efficiency"
+label = "Drivetrain efficiency"
+value = "45"
+unit = "%"
+source = "Engineering estimate — docs/references.md"
+
+[[assumptions]]
+key = "slope"
+label = "Slope limit"
+value = "20"
+unit = "°"
+source = "Operational planning limit (hardware rated to ~30°)"
+source_url = "https://science.nasa.gov/mission/mars-2020-perseverance/"
+
+[[assumptions]]
+key = "energy"
+label = "Energy allocation"
+value = "5,000"
+unit = "Wh"
+source = "2-sol allocation at 110 W — engineering estimate"
+
+[[assumptions]]
+key = "duration"
+label = "Drive-time allocation"
+value = "48"
+unit = "h"
+source = "Engineering estimate — docs/references.md"
+
+[[assumptions]]
+key = "derate"
+label = "Uphill speed derate"
+value = "55"
+unit = "% at limit"
+source = "Model assumption"
