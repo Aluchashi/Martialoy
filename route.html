@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Route Selection | Mars Traverse Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Roboto:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="route-drawing.js" defer></script>
+</head>
+<body data-page="route">
+  <header class="topbar">
+    <a class="brand" href="index.html"><span class="brand-icon">M</span><span>Mars Traverse Planner<small>Jezero Crater · Week 1</small></span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="index.html">Home</a><a class="active" href="route.html">1. Route</a><a href="calculation.html">2. Calculation</a><a href="survival.html">3. Survival</a>
+    </nav>
+  </header>
+  <main class="page-shell">
+    <section class="page-intro"><div><p class="eyebrow">STEP 1 OF 3 · ROUTE SELECTION</p><h1>Choose who is travelling<br /><span>and draw a route.</span></h1></div><p class="intro-note">Select an explorer, then click the map to add route points. Drag a point to adjust it.</p></section>
+
+    <section class="profile-picker" aria-label="Choose explorer">
+      <button class="profile-option selected" type="button" data-profile="rover">
+        <span class="profile-emoji" aria-hidden="true">🤖</span><span><strong>Rover</strong><small>Perseverance · electrical energy</small></span><span class="select-mark">✓</span>
+      </button>
+      <button class="profile-option" type="button" data-profile="human">
+        <span class="profile-emoji" aria-hidden="true">🧑‍🚀</span><span><strong>Human</strong><small>Astronaut EVA · suit + metabolic energy</small></span><span class="select-mark">✓</span>
+      </button>
+    </section>
+
+    <section class="panel map-panel">
+      <div class="panel-title"><div><p class="eyebrow">MARTIAN REGION</p><h2>Jezero Crater</h2></div><span class="region-badge">Mars · default region</span></div>
+      <p class="help-text">Click anywhere on the map to draw your route. Add at least two points.</p>
+      <div class="map-frame">
+        <img src="assets/jezero_dem_map.jpg" alt="Terrain map of Jezero Crater on Mars" />
+        <svg id="route-overlay" viewBox="0 0 1000 600" preserveAspectRatio="none" role="img" aria-label="Your drawn route"></svg>
+        <div class="map-caption">JEZERO CRATER <span>18.38° N · 77.58° E</span></div>
+      </div>
+      <div class="map-controls"><span id="route-point-count" class="point-count">0 route points</span><div><button id="undo-route" class="button button-secondary" type="button">Undo last point</button><button id="clear-route" class="button button-secondary" type="button">Clear route</button></div></div>
+    </section>
+    <div class="step-actions"><span class="engine-note">Route drawing is available. Route calculations will be added next.</span><a class="button button-primary" href="calculation.html">Continue to calculation <span aria-hidden="true">→</span></a></div>
+  </main>
+  <footer class="site-footer">Educational planning interface · Mars data source citations will be shown with the calculation engine.</footer>
+</body>
+</html>

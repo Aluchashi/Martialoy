@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Survival Card | Mars Traverse Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Roboto:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="route-drawing.js" defer></script>
+</head>
+<body data-page="survival">
+  <header class="topbar"><a class="brand" href="index.html"><span class="brand-icon">M</span><span>Mars Traverse Planner<small>Jezero Crater · Week 1</small></span></a><nav class="main-nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="route.html">1. Route</a><a href="calculation.html">2. Calculation</a><a class="active" href="survival.html">3. Survival</a></nav></header>
+  <main class="page-shell">
+    <section class="page-intro"><div><p class="eyebrow">STEP 3 OF 3 · SURVIVAL CARD</p><h1>Is this route<br /><span>safe to travel?</span></h1></div><p class="intro-note">The survival card will check terrain hazards and explorer limits for every route segment.</p></section>
+    <section class="survival-summary panel"><div class="status-banner"><span class="status-symbol">?</span><div><p class="eyebrow">ROUTE VERDICT</p><h2>Not checked yet</h2><p>Safety status appears after terrain and energy calculations are available.</p></div></div><div class="card-stats"><div><span>Explorer</span><strong id="survival-profile">Rover</strong></div><div><span>Region</span><strong>Jezero Crater</strong></div><div><span>Route points</span><strong id="survival-points">0</strong></div></div></section>
+    <section class="panel hazard-panel"><div class="panel-title"><div><p class="eyebrow">HAZARD CHECKS</p><h2>What the route engine will flag</h2></div><span class="region-badge">Awaiting terrain analysis</span></div>
+      <div class="hazard-list">
+        <article class="hazard-item"><span class="hazard-icon">∠</span><div><strong>Steep slopes</strong><p>Flag route segments above the selected explorer's slope limit.</p></div><span class="hazard-status">Not checked</span></article>
+        <article class="hazard-item"><span class="hazard-icon">◇</span><div><strong>Rough or rocky terrain</strong><p>Flag segments with terrain that may be difficult to cross.</p></div><span class="hazard-status">Not checked</span></article>
+        <article class="hazard-item"><span class="hazard-icon">≈</span><div><strong>Soft ground</strong><p>Flag segments that may not support safe travel.</p></div><span class="hazard-status">Not checked</span></article>
+        <article class="hazard-item"><span class="hazard-icon">↩</span><div><strong>Distance from safe return point</strong><p>Check return distance and, for humans, exposure limits.</p></div><span class="hazard-status">Not checked</span></article>
+      </div>
+      <p class="placeholder-note">No hazard has been evaluated yet. This page does not label a route safe or unsafe without the route engine.</p>
+    </section>
+    <div class="step-actions"><a class="button button-secondary" href="calculation.html">← Back to calculation</a><a class="button button-primary" href="route.html">Edit route <span aria-hidden="true">↗</span></a></div>
+  </main>
+  <footer class="site-footer">Safety screening is a planned feature; this page currently shows the checks, not results.</footer>
+</body>
+</html>

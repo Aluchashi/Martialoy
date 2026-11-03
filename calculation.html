@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculation | Mars Traverse Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Roboto:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="route-drawing.js" defer></script>
+</head>
+<body data-page="calculation">
+  <header class="topbar"><a class="brand" href="index.html"><span class="brand-icon">M</span><span>Mars Traverse Planner<small>Jezero Crater · Week 1</small></span></a><nav class="main-nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="route.html">1. Route</a><a class="active" href="calculation.html">2. Calculation</a><a href="survival.html">3. Survival</a></nav></header>
+  <main class="page-shell">
+    <section class="page-intro"><div><p class="eyebrow">STEP 2 OF 3 · CALCULATION</p><h1>Route numbers,<br /><span>all in one place.</span></h1></div><p class="intro-note">Distance, slope, travel time and energy will be calculated for your selected route and explorer.</p></section>
+    <section class="summary-strip panel"><div><span class="summary-label">SELECTED EXPLORER</span><strong id="selected-profile">Rover</strong></div><div><span class="summary-label">REGION</span><strong>Jezero Crater</strong></div><div><span class="summary-label">ROUTE POINTS</span><strong id="selected-points">0</strong></div><a href="route.html" class="text-link">Edit route ↗</a></section>
+    <section class="metrics-grid" aria-label="Route calculation results">
+      <article class="metric-card"><span class="metric-icon">↔</span><p class="metric-label">Total distance</p><strong>— <small>km</small></strong><span class="metric-state">Waiting for route engine</span></article>
+      <article class="metric-card"><span class="metric-icon">∠</span><p class="metric-label">Maximum slope</p><strong>— <small>°</small></strong><span class="metric-state">Waiting for terrain data</span></article>
+      <article class="metric-card"><span class="metric-icon">◷</span><p class="metric-label">Travel time</p><strong>— <small>h</small></strong><span class="metric-state">Waiting for route engine</span></article>
+    </section>
+    <section class="panel energy-panel"><div class="panel-title"><div><p class="eyebrow">ENERGY ESTIMATE</p><h2>Separate energy ledgers</h2></div><span class="region-badge">No values calculated yet</span></div>
+      <div class="energy-ledger" id="rover-ledger"><span class="ledger-symbol">⚡</span><div><strong>Rover electrical energy</strong><small>Electrical consumption for the selected traverse</small></div><b>— Wh</b></div>
+      <div class="energy-ledger" id="human-ledger"><span class="ledger-symbol">⚡</span><div><strong>Human suit electrical energy</strong><small>Suit and life-support electrical consumption</small></div><b>— Wh</b></div>
+      <div class="energy-ledger" id="metabolic-ledger"><span class="ledger-symbol">♡</span><div><strong>Human metabolic energy</strong><small>Estimated human effort for the selected traverse</small></div><b>— kcal</b></div>
+      <p class="placeholder-note">These are empty result fields. A deterministic route engine will calculate them in a later milestone.</p>
+    </section>
+    <div class="step-actions"><a class="button button-secondary" href="route.html">← Back to route</a><a class="button button-primary" href="survival.html">View survival card <span aria-hidden="true">→</span></a></div>
+  </main>
+  <footer class="site-footer">No estimated values are shown until the calculation engine is implemented.</footer>
+</body>
+</html>
