@@ -14,10 +14,6 @@ venv/
 .coverage
 htmlcov/
 
-# Local Mars cache payloads. Keep the manifest example and README committed.
-cache/mars/*
-!cache/mars/README.md
-!cache/mars/manifest.example.json
 
 # OS / editor
 .DS_Store
