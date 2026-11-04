@@ -1,0 +1,32 @@
+{
+  "region": "jezero",
+  "label": "Jezero Crater",
+  "bbox": [76.99743706146, 17.58050480819, 78.58293305797, 19.29018700687],
+  "center": [77.58, 18.44],
+  "basemap": {
+    "file": "basemap.pmtiles",
+    "type": "raster",
+    "tileSize": 256,
+    "bounds": [77.1604655, 18.2110274, 77.6991776, 18.7211945],
+    "attribution": "USGS Astrogeology Science Center / NASA MRO CTX"
+  },
+  "dem": {
+    "file": "jezero_dem.tif",
+    "crs": "Mars 2000 sphere geographic (3396160 m)",
+    "latitude_type": "planetocentric",
+    "vertical_datum": "Mars areoid",
+    "vertical_datum_detail": "DEM mosaic vertically localized to MOLA control",
+    "resolution_m": 20,
+    "nodata": -32768
+  },
+  "sources": [
+    {
+      "name": "USGS Astrogeology Mars 2020 Science Investigation CTX DEM Mosaic",
+      "url": "https://astrogeology.usgs.gov/search/map/mars_2020_science_investigation_ctx_dem_mosaic",
+      "product": "M20_JezeroCrater_CTXDEM_20m.tif",
+      "pds_archive": "Mars Reconnaissance Orbiter / Context Camera (CTX)"
+    },
+    { "name": "NASA Mars Trek", "url": "https://trek.nasa.gov/mars/" },
+    { "name": "NASA Planetary Data System", "url": "https://pds.nasa.gov/" }
+  ]
+}
