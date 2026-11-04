@@ -1,8 +1,25 @@
 # Data pipeline and audit trail
 
-Status: **data not cached in this checkout**. The app runs on a clearly labelled
-synthetic demo terrain until the files described here are placed in
-`cache/mars/`. This page is the checklist for producing and verifying them.
+Status: **Jezero DEM prepared locally; basemap still missing**. The app can use
+the local DEM for route calculations, while map tiles still need to be added to
+`cache/mars/`.
+
+## 0. Prepared DEM in this checkout
+
+Source file: `Data/M20_JezeroCrater_CTXDEM_20m.tif`, the USGS Astrogeology
+Mars 2020 Science Investigation CTX DEM Mosaic. USGS metadata identifies it as
+a 20 m/pixel, planetocentric Jezero crater mosaic, controlled to the MOLA
+control net; added stereo DEMs were vertically localized to MOLA. See the
+[USGS product record](https://astrogeology.usgs.gov/search/map/mars_2020_science_investigation_ctx_dem_mosaic)
+for product details and the source file URL.
+
+Run `python scripts/prepare_dem.py "../Data/M20_JezeroCrater_CTXDEM_20m.tif"`
+from the `Martialoy` directory to create `cache/mars/jezero_dem.tif`. The
+script reprojects from the source Mars equirectangular CRS to its Mars
+geographic base CRS using bilinear interpolation, preserves elevation values,
+sets nodata to -32768, and tags the planetocentric latitude convention. It does
+not transform to Earth EPSG:4326. The prepared file covers approximately
+76.9974–78.5829°E, 17.5805–19.2902°N at about 20 m/pixel.
 
 ## 1. Choose the region
 

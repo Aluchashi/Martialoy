@@ -140,6 +140,8 @@ export function MapView({
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const clickTimer = useRef<number | undefined>(undefined)
+  const drawingRef = useRef(false)
+  const userMovedMapRef = useRef(false)
   const markersRef = useRef<Marker[]>([])
   const coordRef = useRef<HTMLSpanElement>(null)
   const [ready, setReady] = useState(false)
@@ -170,6 +172,9 @@ export function MapView({
       doubleClickZoom: false,
     })
     mapRef.current = map
+    map.on('movestart', (event) => {
+      if (event.originalEvent) userMovedMapRef.current = true
+    })
 
     map.addControl(new NavigationControl({ showCompass: false }), 'top-right')
     map.addControl(new ScaleControl({ maxWidth: 110, unit: 'metric' }), 'bottom-left')
@@ -253,7 +258,12 @@ export function MapView({
         const manifestResponse = await fetch('/mars/manifest.json', { cache: 'no-store' })
         if (!manifestResponse.ok) throw new Error('no manifest')
         const manifest = (await manifestResponse.json()) as {
-          basemap?: { file?: string; tileSize?: number; attribution?: string }
+          basemap?: {
+            file?: string
+            tileSize?: number
+            attribution?: string
+            bounds?: [number, number, number, number]
+          }
         }
         const file = manifest.basemap?.file
         if (!file) throw new Error('no basemap file')
@@ -276,6 +286,31 @@ export function MapView({
           },
           'graticule',
         )
+        const bounds = manifest.basemap?.bounds
+        if (bounds && bounds.every(Number.isFinite)) {
+          // The PMTiles archive covers only part of the larger DEM planning
+          // region. Frame its real footprint so the raster fills the map on
+          // first load instead of leaving a large grid-only area in view.
+          const [west, south, east, north] = bounds
+          // Keep selection inside the overlap: the DEM is larger, but only
+          // this footprint has matching orbital imagery underneath it.
+          m.setMaxBounds([
+            [west, south],
+            [east, north],
+          ])
+          if (!userMovedMapRef.current) {
+            const points = live.current.points
+            const longitudes = [...bounds.filter((_, index) => index % 2 === 0), ...points.map(([lon]) => lon)]
+            const latitudes = [...bounds.filter((_, index) => index % 2 === 1), ...points.map(([, lat]) => lat)]
+            m.fitBounds(
+              [
+                [Math.min(...longitudes), Math.min(...latitudes)],
+                [Math.max(...longitudes), Math.max(...latitudes)],
+              ],
+              { padding: 32, maxZoom: 12, duration: 0 },
+            )
+          }
+        }
         setBasemap('ready')
         setBasemapLabel(manifest.basemap?.attribution ?? 'NASA Mars Trek')
       } catch {
@@ -284,6 +319,7 @@ export function MapView({
     }
 
     const handleClick = (event: MapMouseEvent) => {
+      drawingRef.current = true
       const point: LonLat = [event.lngLat.lng, event.lngLat.lat]
       window.clearTimeout(clickTimer.current)
       clickTimer.current = window.setTimeout(() => {
@@ -293,11 +329,17 @@ export function MapView({
 
     const handleDoubleClick = () => {
       window.clearTimeout(clickTimer.current)
+      drawingRef.current = false
+      setPreview(map, null, null)
     }
 
     const handleMove = (event: MapMouseEvent) => {
       if (coordRef.current) {
         coordRef.current.textContent = `${Math.abs(event.lngLat.lat).toFixed(4)}°${event.lngLat.lat >= 0 ? 'N' : 'S'}  ${Math.abs(event.lngLat.lng).toFixed(4)}°${event.lngLat.lng >= 0 ? 'E' : 'W'}`
+      }
+      if (!drawingRef.current) {
+        setPreview(map, null, null)
+        return
       }
       const current = live.current.points
       if (current.length === 0) {
@@ -436,7 +478,15 @@ export function MapView({
           <button type="button" className="btn btn-ghost" onClick={onUndo} disabled={points.length === 0}>
             Undo
           </button>
-          <button type="button" className="btn btn-ghost" onClick={onClear} disabled={points.length === 0}>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => {
+              drawingRef.current = false
+              onClear()
+            }}
+            disabled={points.length === 0}
+          >
             Clear
           </button>
           <span className="vertex-count">
@@ -450,7 +500,7 @@ export function MapView({
             </>
           ) : basemap === 'loading' ? (
             <>
-              <span className="dot pulse" /> Looking for cache/mars/basemap
+              <span className="dot pulse" /> Loading local Jezero basemap
             </>
           ) : (
             <>

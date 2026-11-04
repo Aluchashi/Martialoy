@@ -2,7 +2,8 @@
 
 This directory is where the local, offline Mars datasets live. Nothing here is
 downloaded at runtime: MapLibre reads the PMTiles basemap and the Python engine
-reads the COG DEM from this folder.
+reads the DEM from this folder. This checkout already contains the Jezero DEM,
+the matching `basemap.pmtiles`, and a `manifest.json` that points to both.
 
 Payload files are **not committed** (see `.gitignore`). Commit only this README
 and `manifest.example.json`.
@@ -11,12 +12,14 @@ and `manifest.example.json`.
 
 | File | Format | Used by | Notes |
 |---|---|---|---|
-| `basemap.pmtiles` | Raster or vector PMTiles | MapLibre | Export the NASA Mars Trek regional mosaic for Jezero |
-| `jezero_dem.tif` | Cloud-optimised GeoTIFF (COG) | `src/compute/dem.py` | 20–50 m/px regional DEM, Mars areoid heights |
+| `basemap.pmtiles` | Raster PMTiles | MapLibre | Jezero CTX orbital image mosaic |
+| `jezero_dem.tif` | Tiled GeoTIFF | `src/compute/dem.py` | Prepared from the 20 m/pixel USGS CTX mosaic; MOLA localized |
 | `manifest.json` | JSON | web + API | Copy `manifest.example.json` and edit paths/metadata |
 
-`manifest.json` is the only filename the app knows. Keep the payload names
-stable so a fresh clone behaves the same way once the files are dropped in.
+`manifest.json` tells the app which local files to use. The frontend serves
+these files at `/mars` in Vite dev/preview, and the FastAPI app serves them at
+`/mars` when running the backend. Both payloads and the local manifest are
+ignored by git, so prepare or copy them again when setting up a fresh clone.
 
 ## Manifest
 
@@ -27,13 +30,17 @@ Copy-Item cache/mars/manifest.example.json cache/mars/manifest.json
 Then edit:
 
 - `bbox` and `center` to the actual regional crop (lon, lat order).
-- `basemap.file` / `dem.file` to the filenames above.
+- `basemap.file` / `dem.file` to the filenames above. Set `basemap.bounds`
+  to the PMTiles image footprint in lon/lat order so point selection stays
+  over imagery that overlaps the DEM.
 - `dem.crs`, `dem.vertical_datum`, `dem.resolution_m`, `dem.nodata`.
 - `sources[]` with the exact Mars Trek / PDS product pages used.
 
-The frontend probes `/mars/manifest.json`; when it is absent or the basemap is
-missing it shows **No cached basemap — drawing still works** and keeps the demo
-engine available. The API returns a clear `503` when the DEM is missing.
+The point selection map reads `/mars/manifest.json` and adds the local PMTiles
+as a raster layer beneath the route, markers, and grid. Its selectable view is
+framed to the image/DEM overlap; the DEM covers a larger Jezero area. If the manifest or
+basemap cannot be served, it shows **No cached basemap — drawing still works**.
+The API returns a clear `503` when the DEM is missing.
 
 ## Producing the files
 

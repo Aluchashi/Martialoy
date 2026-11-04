@@ -6,9 +6,10 @@ interface Props {
   profile: ProfileId
   onProfileChange: (profile: ProfileId) => void
   engine: 'api' | 'demo'
+  page: 'route' | 'calculation' | 'survival'
 }
 
-export function Header({ profile, onProfileChange, engine }: Props) {
+export function Header({ profile, onProfileChange, engine, page }: Props) {
   return (
     <header className="topbar">
       <div className="brand">
@@ -39,6 +40,13 @@ export function Header({ profile, onProfileChange, engine }: Props) {
           {REGION.center[1].toFixed(2)}°N · {REGION.center[0].toFixed(2)}°E
         </span>
       </div>
+
+      <nav className="main-nav" aria-label="Main navigation">
+        <a href="#home">Home</a>
+        <a className={page === 'route' ? 'active' : ''} href="#route">1. Route</a>
+        <a className={page === 'calculation' ? 'active' : ''} href="#calculation">2. Calculation</a>
+        <a className={page === 'survival' ? 'active' : ''} href="#survival">3. Survival</a>
+      </nav>
 
       <div className="topbar-actions">
         <div className="profile-toggle" role="group" aria-label="Explorer profile">

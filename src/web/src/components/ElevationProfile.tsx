@@ -3,7 +3,7 @@ import type { RouteResult, RouteSample } from '../types'
 import { clamp } from '../lib/geo'
 import { formatDegrees, formatDistance } from '../lib/format'
 
-const HEIGHT = 172
+const HEIGHT = 250
 const M = { top: 16, right: 18, bottom: 26, left: 56 }
 
 interface Props {
