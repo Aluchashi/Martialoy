@@ -422,27 +422,6 @@ a {
   white-space: nowrap;
 }
 
-.basemap-note {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 9px;
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--line);
-  font-family: var(--mono);
-  font-size: 13px;
-  line-height: 1.35;
-  color: var(--faint);
-}
-
-.basemap-note.missing .dot {
-  background: var(--amber);
-}
-
-.basemap-note.loading .dot {
-  background: var(--muted);
-}
-
 .map-readout {
   position: absolute;
   right: 12px;
@@ -1749,7 +1728,7 @@ a.a-source:hover {
 .page-intro h1 { margin: 7px 0 0; font-size: clamp(30px, 4vw, 43px); font-weight: 500; letter-spacing: -0.02em; }
 .page-intro h1 span { color: var(--rust); }
 .intro-note { max-width: 390px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
-.route-layout { display: grid; height: auto; min-height: 0; flex: none; grid-template-columns: minmax(0,1fr) minmax(320px,380px); grid-template-rows: auto; grid-template-areas: "map side"; align-items: stretch; }
+.route-layout { display: grid; height: auto; min-height: 0; flex: none; grid-template-columns: minmax(0,1fr) minmax(320px,380px); grid-template-rows: auto; grid-template-areas: "map side"; align-items: stretch; padding: 0; }
 .route-layout .map-shell { height: auto; min-height: 540px; align-self: stretch; }
 .route-assumptions { grid-area: side; min-width: 0; }
 .step-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 17px 0 3px; }
@@ -2043,7 +2022,7 @@ a.a-source:hover {
   grid-template-columns: minmax(0, 1fr) 372px;
   align-items: start;
   gap: 20px;
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
 }
 .page-intro-route .eyebrow { font-size: 13px; color: var(--rust-soft); }
 .page-intro-route h1 { margin: var(--space-1) 0 0; font-size: clamp(30px, 4vw, 44px); font-weight: 500; letter-spacing: -0.02em; line-height: 1.06; }
@@ -2053,16 +2032,16 @@ a.a-source:hover {
 .route-tools-vertical {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding: 14px var(--space-4);
+  gap: var(--space-2);
+  padding: 10px 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: linear-gradient(150deg, var(--panel-2), var(--panel));
   box-shadow: 0 14px 34px rgba(0, 0, 0, .3);
   animation: cardIn .5s .08s ease both;
 }
-.route-tools-row { display: flex; flex-direction: column; gap: var(--space-2); }
-.route-tools-row + .route-tools-row { padding-top: var(--space-3); border-top: 1px solid var(--line); }
+.route-tools-row { display: flex; flex-direction: column; gap: 6px; }
+.route-tools-row + .route-tools-row { padding-top: var(--space-2); border-top: 1px solid var(--line); }
 .route-tools-label { color: var(--muted); font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; }
 
 .profile-toggle-stretch { display: flex; width: 100%; }
@@ -2104,7 +2083,6 @@ a.a-source:hover {
 .map-toolbar-below .map-actions { margin-left: auto; gap: var(--space-2); }
 .map-toolbar-below .map-actions .btn { padding: var(--space-2) 15px; border-radius: var(--radius-md); font-size: 13px; }
 .map-toolbar-below .vertex-count { margin-left: var(--space-1); font-size: 13px; color: var(--muted); }
-.map-toolbar-below .basemap-note { flex-basis: 100%; margin: 0; padding: var(--space-2) 0 0; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
 
 /* readable map chrome */
 .page-shell-route .map-readout,
@@ -3251,8 +3229,12 @@ body {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--bg-base);
+  background: transparent;
   border-bottom: 1px solid var(--border-subtle);
+}
+.app-header.app-header-home {
+  margin-bottom: -64px;
+  border-bottom: 0;
 }
 .app-header-inner {
   display: flex;
@@ -3271,9 +3253,8 @@ body {
 }
 .hd-logo {
   display: block;
-  width: clamp(124px, 13vw, 158px);
+  width: clamp(160px, 16vw, 196px);
   height: auto;
-  filter: brightness(0) saturate(100%) invert(61%) sepia(58%) saturate(1125%) hue-rotate(327deg) brightness(100%) contrast(91%);
 }
 .hd-mark {
   display: grid;
@@ -3810,7 +3791,9 @@ body { background: var(--bg-base); }
 
 /* ---------- hero layout ---------- */
 .hero-body {
-  min-height: 500px;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-top: 24px;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   gap: var(--space-6);
 }
@@ -3982,3 +3965,133 @@ body { background: var(--bg-base); }
   .hero-description { max-width: none; }
   .hero-visual { width: 100%; opacity: 1; }
 }
+
+/* ---------- shared button system ---------- */
+:root {
+  --button-height: 40px;
+  --button-height-sm: 36px;
+  --button-height-lg: 48px;
+  --button-radius: 10px;
+}
+.hero-button,
+.button,
+.btn,
+.ui-btn {
+  display: inline-flex;
+  height: var(--button-height);
+  min-height: var(--button-height);
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: var(--button-radius);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  background:
+    linear-gradient(180deg, var(--surface-2), var(--surface-1)) padding-box,
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.035)) border-box;
+  background-origin: border-box;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+.hero-button-primary,
+.button-primary,
+.btn-primary,
+.ui-btn-primary {
+  border-color: transparent;
+  background:
+    linear-gradient(180deg, var(--accent-500), var(--accent-600)) padding-box,
+    linear-gradient(135deg, var(--accent-300), var(--accent-700)) border-box;
+  color: var(--text-on-accent);
+}
+.hero-button-primary:hover,
+.button-primary:hover:not(:disabled),
+.btn-primary:hover:not(:disabled),
+.ui-btn-primary:hover:not(:disabled) {
+  background:
+    linear-gradient(180deg, var(--accent-400), var(--accent-500)) padding-box,
+    linear-gradient(135deg, var(--accent-300), var(--accent-600)) border-box;
+}
+.hero-button-secondary,
+.button-secondary,
+.btn-ghost,
+.ui-btn-secondary,
+.ui-btn-ghost {
+  border-color: transparent;
+  background:
+    linear-gradient(180deg, var(--surface-2), var(--bg-subtle)) padding-box,
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.035)) border-box;
+  color: var(--text-primary);
+}
+.hero-button-secondary:hover,
+.button-secondary:hover:not(:disabled),
+.btn-ghost:hover:not(:disabled),
+.ui-btn-secondary:hover:not(:disabled),
+.ui-btn-ghost:hover:not(:disabled) {
+  background:
+    linear-gradient(180deg, var(--surface-3), var(--surface-1)) padding-box,
+    linear-gradient(135deg, rgba(245, 162, 124, 0.38), rgba(255, 255, 255, 0.045)) border-box;
+}
+.ui-btn-sm { height: var(--button-height-sm); min-height: var(--button-height-sm); padding-inline: 12px; font-size: 13px; }
+.ui-btn-lg { height: var(--button-height-lg); min-height: var(--button-height-lg); padding-inline: 20px; font-size: 16px; }
+.profile-btn,
+.ui-seg button {
+  height: var(--button-height-sm);
+  min-height: var(--button-height-sm);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, var(--surface-2), var(--surface-1)) padding-box,
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.025)) border-box;
+  color: var(--text-secondary);
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+.profile-toggle-stretch .profile-btn { height: var(--button-height-sm); min-height: var(--button-height-sm); padding: 0 12px; font-size: 13px; }
+.profile-btn.active,
+.ui-seg button.is-active {
+  border-color: transparent;
+  background:
+    linear-gradient(180deg, var(--accent-tint), var(--surface-2)) padding-box,
+    linear-gradient(135deg, var(--accent-400), rgba(245, 162, 124, 0.2)) border-box;
+  color: var(--text-primary);
+}
+.route-preset,
+.calc-empty-actions .button,
+.page-shell-route .step-actions .button,
+.page-shell-calculation .step-actions .button,
+.page-shell-survival .step-actions .button,
+.map-actions .btn,
+.map-toolbar-below .map-actions .btn {
+  height: var(--button-height);
+  min-height: var(--button-height);
+  padding: 0 14px;
+  font-size: 14px;
+}
+.preset-btn {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(180deg, var(--surface-2), var(--surface-1)) padding-box,
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.035)) border-box;
+  color: var(--text-primary);
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+.preset-btn:hover {
+  background:
+    linear-gradient(180deg, var(--surface-3), var(--surface-1)) padding-box,
+    linear-gradient(135deg, rgba(245, 162, 124, 0.38), rgba(255, 255, 255, 0.045)) border-box;
+}
+.hero-button:active,
+.button:active,
+.btn:active,
+.ui-btn:active,
+.profile-btn:active,
+.ui-seg button:active { transform: scale(0.98); }
+.hero-button:disabled,
+.button:disabled,
+.btn:disabled,
+.ui-btn:disabled { opacity: 0.45; cursor: not-allowed; }

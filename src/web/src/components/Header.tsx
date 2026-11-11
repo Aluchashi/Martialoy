@@ -33,7 +33,7 @@ export function Header({ page, wide = false }: Props) {
   }, [open])
 
   return (
-    <header className="app-header">
+      <header className={`app-header ${page === 'home' ? 'app-header-home' : ''}`}>
       <div className={`app-header-inner ${wide ? 'ui-container-wide' : 'ui-container'}`.trim()}>
         <a className="hd-brand" href="#home">
           <img className="hd-logo" src={martialoyLogo} alt="Martialoy" />

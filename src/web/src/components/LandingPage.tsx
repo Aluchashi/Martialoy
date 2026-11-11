@@ -11,7 +11,6 @@ export function LandingPage() {
       <section className="landing-hero">
         <div className="hero-body">
           <div className="hero-copy">
-            <p className="eyebrow">Mars traverse planner · Jezero Crater</p>
             <h1 className="hero-chrome">Every traverse<br />starts with a <span>line.</span></h1>
             <p className="hero-description">Draw a path across Martian terrain. Compare rover and suited explorer limits, then review distance, energy and survival checks.</p>
             <div className="hero-actions">

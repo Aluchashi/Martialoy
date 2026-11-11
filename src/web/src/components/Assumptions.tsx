@@ -43,10 +43,6 @@ export function Assumptions({ profile, assumptionOverride }: Props) {
         <code>{profile.formula}</code>
       </div>
 
-      <p className="fineprint">
-        Every constant above is used by the compute engine — nothing is hidden in code. Draft
-        values are tracked against sources in <span className="mono">docs/references.md</span>.
-      </p>
     </details>
   )
 }

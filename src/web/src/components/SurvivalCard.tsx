@@ -1,4 +1,4 @@
-import { formatDistance, formatEnergy } from '../lib/format'
+import { formatEnergy } from '../lib/format'
 import type {
   ContingencyState,
   ProfileSpec,
@@ -145,13 +145,6 @@ export function SurvivalCard({
             </ul>
           )}
 
-          <div className="card-meta">
-            <span>{formatDistance(result.distance_m)} sampled</span>
-            <span>·</span>
-            <span>{result.spacing_m} m spacing</span>
-            <span>·</span>
-            <span>{result.pass ? 'Within limits' : 'Outside limits'}</span>
-          </div>
         </div>
       )}
     </section>

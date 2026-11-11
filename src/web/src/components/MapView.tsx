@@ -113,8 +113,6 @@ function studyAreaData(): FeatureCollection {
   }
 }
 
-type BasemapState = 'loading' | 'ready' | 'missing'
-
 interface Props {
   points: LonLat[]
   result: RouteResult | null
@@ -147,8 +145,6 @@ export function MapView({
   const markersRef = useRef<Marker[]>([])
   const coordRef = useRef<HTMLSpanElement>(null)
   const [ready, setReady] = useState(false)
-  const [basemap, setBasemap] = useState<BasemapState>('loading')
-  const [basemapLabel, setBasemapLabel] = useState('')
 
   const live = useRef({ points, result, contingency, hover, onAddPoint, onUndo })
   live.current = { points, result, contingency, hover, onAddPoint, onUndo }
@@ -315,10 +311,8 @@ export function MapView({
             )
           }
         }
-        setBasemap('ready')
-        setBasemapLabel(manifest.basemap?.attribution ?? 'NASA Mars Trek')
       } catch {
-        setBasemap('missing')
+        // Keep the map interactive if no local basemap is available.
       }
     }
 
@@ -528,21 +522,6 @@ export function MapView({
           <span className="vertex-count">
             {points.length} {points.length === 1 ? 'vertex' : 'vertices'}
           </span>
-        </div>
-        <div className={`basemap-note ${basemap}`}>
-          {basemap === 'ready' ? (
-            <>
-              <span className="dot" /> {basemapLabel || 'NASA Mars Trek'} · local PMTiles
-            </>
-          ) : basemap === 'loading' ? (
-            <>
-              <span className="dot pulse" /> Loading local Jezero basemap
-            </>
-          ) : (
-            <>
-              <span className="dot warn" /> No cached basemap — drawing still works
-            </>
-          )}
         </div>
       </div>
     </div>
