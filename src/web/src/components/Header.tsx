@@ -1,35 +1,83 @@
+import { useEffect, useState } from 'react'
+import { Icon } from './ui'
+import martialoyLogo from './MARTIALOY.svg'
+
+const NAV = [
+  { page: 'home', label: 'Home', href: '#home' },
+  { page: 'route', label: 'Route', href: '#route' },
+  { page: 'calculation', label: 'Calculation', href: '#calculation' },
+  { page: 'survival', label: 'Survival Card', href: '#survival' },
+] as const
+
 interface Props {
-  page: 'route' | 'calculation' | 'survival'
+  page: (typeof NAV)[number]['page']
+  wide?: boolean
 }
 
-export function Header({ page }: Props) {
+export function Header({ page, wide = false }: Props) {
+  const [open, setOpen] = useState(false)
+
+  // Close the mobile menu whenever the page changes.
+  useEffect(() => {
+    setOpen(false)
+  }, [page])
+
+  // Escape closes the open menu.
+  useEffect(() => {
+    if (!open) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
+
   return (
-    <header className="topbar topbar-minimal">
-      <div className="brand">
-        <span className="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" width="30" height="30">
-            <circle cx="16" cy="16" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-            <path
-              d="M16 2.5v5.5M16 24v5.5M2.5 16H8M24 16h5.5"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-            />
-            <circle cx="16" cy="16" r="2.3" fill="currentColor" />
-          </svg>
-        </span>
-        <div className="brand-copy">
-          <h1>Martialoy</h1>
-          <p>Mars traverse &amp; survival planner</p>
-        </div>
+    <header className="app-header">
+      <div className={`app-header-inner ${wide ? 'ui-container-wide' : 'ui-container'}`.trim()}>
+        <a className="hd-brand" href="#home">
+          <img className="hd-logo" src={martialoyLogo} alt="Martialoy" />
+        </a>
+
+        <nav className="hd-nav" aria-label="Main">
+          {NAV.map((item) => (
+            <a
+              key={item.page}
+              href={item.href}
+              aria-current={page === item.page ? 'page' : undefined}
+              className={page === item.page ? 'is-active' : undefined}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <button
+          type="button"
+          className="hd-toggle"
+          aria-expanded={open}
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          onClick={() => setOpen((value) => !value)}
+        >
+          <Icon name={open ? 'close' : 'menu'} size={20} />
+        </button>
       </div>
 
-      <nav className="main-nav" aria-label="Main navigation">
-        <a href="#home">Home</a>
-        <a className={page === 'route' ? 'active' : ''} href="#route">Route</a>
-        <a className={page === 'calculation' ? 'active' : ''} href="#calculation">Calculation</a>
-        <a className={page === 'survival' ? 'active' : ''} href="#survival">Survival Card</a>
-      </nav>
+      {open && (
+        <nav className="hd-menu" aria-label="Main">
+          {NAV.map((item) => (
+            <a
+              key={item.page}
+              href={item.href}
+              aria-current={page === item.page ? 'page' : undefined}
+              className={page === item.page ? 'is-active' : undefined}
+              onClick={() => setOpen(false)}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      )}
     </header>
   )
 }

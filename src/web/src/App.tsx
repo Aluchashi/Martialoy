@@ -195,12 +195,9 @@ export default function App() {
 
   return (
     <div className="app">
-      {page === 'home' ? (
-        <LandingPage />
-      ) : (
-        <>
-          <Header page={page} />
-          {page === 'route' && (
+      <Header page={page} wide={page === 'route'} />
+      {page === 'home' && <LandingPage />}
+      {page === 'route' && (
             <main className="page-shell page-shell-route">
               <section className="page-intro page-intro-route">
                 <div className="page-intro-copy">
@@ -323,9 +320,7 @@ export default function App() {
               <div className="step-actions survival-step-actions"><a className="button button-secondary" href="#calculation">← Back to calculation</a><a className="button button-primary" href="#route">Edit route →</a></div>
             </main>
           )}
-          <SiteFooter />
-        </>
-      )}
+      <SiteFooter wide={page === 'route'} />
     </div>
   )
 }

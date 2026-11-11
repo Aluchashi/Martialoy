@@ -116,7 +116,7 @@ export function ElevationProfile({ result, onHover }: Props) {
   }
 
   const summary = result
-    ? `${formatDistance(result.distance_m)} · ${Math.round(result.climb_m)} m climb · max ${formatDegrees(result.max_slope_deg)}`
+    ? `${formatDistance(result.distance_m)} Â· ${Math.round(result.climb_m)} m climb Â· max ${formatDegrees(result.max_slope_deg)}`
     : 'Draw a route to sample the DEM'
 
   return (
@@ -129,7 +129,7 @@ export function ElevationProfile({ result, onHover }: Props) {
         {result && (
           <div className="chart-legend">
             <span className="legend-swatch terrain" /> Terrain
-            <span className="legend-swatch hazard" /> Over {result.slope_limit_deg}°
+            <span className="legend-swatch hazard" /> Over {result.slope_limit_deg}Â°
             <span className="chart-spacing">{result.spacing_m} m sampling</span>
           </div>
         )}
@@ -157,8 +157,8 @@ export function ElevationProfile({ result, onHover }: Props) {
               <title>Elevation profile</title>
               <defs>
                 <linearGradient id="terrain-fill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#e0653a" stopOpacity="0.34" />
-                  <stop offset="100%" stopColor="#e0653a" stopOpacity="0.02" />
+                  <stop offset="0%" stopColor="#ff7a45" stopOpacity="0.34" />
+                  <stop offset="100%" stopColor="#ff7a45" stopOpacity="0.02" />
                 </linearGradient>
               </defs>
 
@@ -263,8 +263,8 @@ export function ElevationProfile({ result, onHover }: Props) {
                 <span className="tip-metric">{Math.round(hovered.elevation_m).toLocaleString('en-US')} m</span>
                 <span className={`tip-slope ${hovered.over_limit ? 'over' : ''}`}>
                   {hovered.slope_deg === 0
-                    ? '—'
-                    : `${hovered.slope_deg > 0 ? '+' : ''}${hovered.slope_deg.toFixed(1)}°`}
+                    ? 'â€”'
+                    : `${hovered.slope_deg > 0 ? '+' : ''}${hovered.slope_deg.toFixed(1)}Â°`}
                 </span>
               </div>
             )}

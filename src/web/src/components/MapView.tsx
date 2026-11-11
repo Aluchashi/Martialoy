@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Map as MapLibreMap,
   Marker,
@@ -190,14 +190,14 @@ export function MapView({
         type: 'line',
         source: 'route',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
-        paint: { 'line-color': '#0b0908', 'line-width': 8, 'line-opacity': 0.85 },
+        paint: { 'line-color': '#05070f', 'line-width': 8, 'line-opacity': 0.85 },
       })
       map.addLayer({
         id: 'route-line',
         type: 'line',
         source: 'route',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
-        paint: { 'line-color': '#e0653a', 'line-width': 3.5 },
+        paint: { 'line-color': '#ff7a45', 'line-width': 3.5 },
       })
 
       map.addSource('hazards', { type: 'geojson', data: EMPTY })
@@ -233,8 +233,8 @@ export function MapView({
         source: 'vertices',
         paint: {
           'circle-radius': ['match', ['get', 'role'], 'start', 6, 'end', 6, 4],
-          'circle-color': ['match', ['get', 'role'], 'start', '#5fbfa8', 'end', '#e0653a', '#f5ece3'],
-          'circle-stroke-color': '#0b0908',
+          'circle-color': ['match', ['get', 'role'], 'start', '#4bd6c4', 'end', '#ff7a45', '#eef2ff'],
+          'circle-stroke-color': '#05070f',
           'circle-stroke-width': 2,
         },
       })
@@ -247,7 +247,7 @@ export function MapView({
         paint: {
           'circle-radius': 6,
           'circle-color': '#ffd9c4',
-          'circle-stroke-color': '#e0653a',
+          'circle-stroke-color': '#ff7a45',
           'circle-stroke-width': 2,
         },
       })
