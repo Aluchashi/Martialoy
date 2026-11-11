@@ -3,7 +3,7 @@ import type { RouteResult, RouteSample } from '../types'
 import { clamp } from '../lib/geo'
 import { formatDegrees, formatDistance } from '../lib/format'
 
-const HEIGHT = 250
+const FALLBACK_HEIGHT = 250
 const M = { top: 16, right: 18, bottom: 26, left: 56 }
 
 interface Props {
@@ -14,21 +14,32 @@ interface Props {
 export function ElevationProfile({ result, onHover }: Props) {
   const bodyRef = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState(760)
+  const [height, setHeight] = useState(FALLBACK_HEIGHT)
   const [hoverIndex, setHoverIndex] = useState<number | null>(null)
 
   useEffect(() => {
     const element = bodyRef.current
     if (!element) return
     const observer = new ResizeObserver((entries) => {
-      const next = entries[0]?.contentRect.width
-      if (next) setWidth(Math.max(320, next))
+      const rect = entries[0]?.contentRect
+      if (rect?.width) setWidth(Math.max(320, rect.width))
+      if (rect?.height) setHeight(Math.max(200, Math.round(rect.height)))
     })
     observer.observe(element)
     return () => observer.disconnect()
   }, [])
 
+  // Belt-and-braces: measure once when a result arrives (the panel may have
+  // been laid out before the SVG was mounted, so the observer can miss it).
+  useEffect(() => {
+    const element = bodyRef.current
+    if (!element) return
+    const rect = element.getBoundingClientRect()
+    if (rect.height) setHeight(Math.max(200, Math.round(rect.height)))
+  }, [result])
+
   const plotWidth = Math.max(120, width - M.left - M.right)
-  const plotHeight = HEIGHT - M.top - M.bottom
+  const plotHeight = height - M.top - M.bottom
 
   const chart = useMemo(() => {
     if (!result || result.samples.length < 2) return null
@@ -137,7 +148,7 @@ export function ElevationProfile({ result, onHover }: Props) {
           <>
             <svg
               width={width}
-              height={HEIGHT}
+              height={height}
               role="img"
               aria-label={`Elevation profile over ${formatDistance(result.distance_m)}, maximum slope ${formatDegrees(result.max_slope_deg)}`}
               onPointerMove={handleMove}
@@ -161,7 +172,7 @@ export function ElevationProfile({ result, onHover }: Props) {
                     className="chart-grid"
                   />
                   <text x={M.left - 10} y={chart.y(tick) + 3.5} className="chart-axis" textAnchor="end">
-                    {Math.round(tick).toLocaleString('en-US')}
+                    {Math.round(tick).toLocaleString('en-US')} m
                   </text>
                 </g>
               ))}
@@ -177,11 +188,11 @@ export function ElevationProfile({ result, onHover }: Props) {
                   />
                   <text
                     x={chart.x(tick)}
-                    y={HEIGHT - 8}
+                    y={height - 8}
                     className="chart-axis"
                     textAnchor="middle"
                   >
-                    {tick === 0 ? '0' : (tick / 1000).toFixed(1)}
+                    {tick === 0 ? '0 km' : `${(tick / 1000).toFixed(1)} km`}
                   </text>
                 </g>
               ))}

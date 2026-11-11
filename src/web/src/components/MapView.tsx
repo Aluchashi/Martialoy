@@ -125,6 +125,7 @@ interface Props {
   onAddPoint: (point: LonLat) => void
   onUndo: () => void
   onClear: () => void
+  onFinish?: () => void
 }
 
 export function MapView({
@@ -136,6 +137,7 @@ export function MapView({
   onAddPoint,
   onUndo,
   onClear,
+  onFinish,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
@@ -170,6 +172,8 @@ export function MapView({
       dragRotate: false,
       pitchWithRotate: false,
       doubleClickZoom: false,
+      scrollZoom: false,
+      cooperativeGestures: true,
     })
     mapRef.current = map
     map.on('movestart', (event) => {
@@ -468,12 +472,32 @@ export function MapView({
   }, [ready, points, result, contingency, hover])
 
   return (
-    <div className="map-shell">
-      <div ref={containerRef} className="map-root" />
+    <div className="route-map-stack">
+      <div className="map-shell">
+        <div ref={containerRef} className="map-root" />
 
-      <div className="map-toolbar">
+        <div className="map-readout" aria-hidden="true">
+          <span ref={coordRef}>18.4400°N 77.5800°E</span>
+          <span className="sep">·</span>
+          <span>{REGION.label}</span>
+        </div>
+
+        {result && (
+          <div className="map-legend">
+            <span className="legend-swatch route" /> Traverse
+            <span className="legend-swatch hazard" /> Over limit
+            {contingency && (
+              <>
+                <span className="legend-swatch contingency" /> Contingency
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="map-toolbar map-toolbar-below">
         <span className="eyebrow">Draw traverse</span>
-        <p className="map-help">Click to add a vertex · double-click to stop</p>
+        <p className="map-help">Click to add a vertex · Finish when done</p>
         <div className="map-actions">
           <button type="button" className="btn btn-ghost" onClick={onUndo} disabled={points.length === 0}>
             Undo
@@ -488,6 +512,18 @@ export function MapView({
             disabled={points.length === 0}
           >
             Clear
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => {
+              drawingRef.current = false
+              if (mapRef.current) setPreview(mapRef.current, null, null)
+              onFinish?.()
+            }}
+            disabled={points.length < 2}
+          >
+            Finish route
           </button>
           <span className="vertex-count">
             {points.length} {points.length === 1 ? 'vertex' : 'vertices'}
@@ -509,24 +545,6 @@ export function MapView({
           )}
         </div>
       </div>
-
-      <div className="map-readout" aria-hidden="true">
-        <span ref={coordRef}>18.4400°N 77.5800°E</span>
-        <span className="sep">·</span>
-        <span>{REGION.label}</span>
-      </div>
-
-      {result && (
-        <div className="map-legend">
-          <span className="legend-swatch route" /> Traverse
-          <span className="legend-swatch hazard" /> Over limit
-          {contingency && (
-            <>
-              <span className="legend-swatch contingency" /> Contingency
-            </>
-          )}
-        </div>
-      )}
     </div>
   )
 }

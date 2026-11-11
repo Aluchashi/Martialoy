@@ -164,5 +164,8 @@ function formatCheckValue(check: Check): string {
   if (check.id === 'energy') {
     return `${formatEnergy(check.value)} / ${formatEnergy(check.limit)}`
   }
-  return `${check.value.toFixed(1)} h / ${check.limit.toFixed(0)} h`
+  // check.value/limit are in hours — render as "19 h 12 m / 48 h"
+  const toDuration = (h: number) => formatDuration(h * 3600)
+  const limitH = check.limit
+  return `${toDuration(check.value)} / ${limitH.toFixed(0)} h`
 }

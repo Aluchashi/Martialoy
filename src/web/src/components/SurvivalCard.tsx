@@ -17,6 +17,8 @@ interface Props {
   onRequestContingency: () => void
   onUseContingency: () => void
   onDismissContingency: () => void
+  /** Render the checks list inside this card (default true). */
+  showChecks?: boolean
 }
 
 export function SurvivalCard({
@@ -30,6 +32,7 @@ export function SurvivalCard({
   onRequestContingency,
   onUseContingency,
   onDismissContingency,
+  showChecks = true,
 }: Props) {
   const limit = profile.constants.maxSlopeDeg
 
@@ -122,22 +125,7 @@ export function SurvivalCard({
             </span>
           </div>
 
-          <ul className="checks">
-            {result.checks.map((check) => (
-              <li key={check.id} className={check.pass ? 'pass' : 'fail'}>
-                <span className="check-icon" aria-hidden="true">
-                  {check.pass ? '✓' : '✕'}
-                </span>
-                <div className="check-copy">
-                  <span className="check-label">{check.label}</span>
-                  <span className="check-detail">{check.detail}</span>
-                </div>
-                <span className="check-value">
-                  {checkValue(check.value, check.limit, check.id)}
-                </span>
-              </li>
-            ))}
-          </ul>
+          {showChecks && <ChecksList result={result} />}
 
           <FailurePanel
             result={result}
@@ -167,6 +155,27 @@ export function SurvivalCard({
         </div>
       )}
     </section>
+  )
+}
+
+export function ChecksList({ result }: { result: RouteResult }) {
+  return (
+    <ul className="checks">
+      {result.checks.map((check) => (
+        <li key={check.id} className={check.pass ? 'pass' : 'fail'}>
+          <span className="check-icon" aria-hidden="true">
+            {check.pass ? '✓' : '✕'}
+          </span>
+          <div className="check-copy">
+            <span className="check-label">{check.label}</span>
+            <span className="check-detail">{check.detail}</span>
+          </div>
+          <span className="check-value">
+            {checkValue(check.value, check.limit, check.id)}
+          </span>
+        </li>
+      ))}
+    </ul>
   )
 }
 
@@ -221,7 +230,8 @@ function durationParts(seconds: number): { value: string; unit: string } {
   const hours = Math.floor(totalMinutes / 60)
   const minutes = totalMinutes % 60
   if (hours === 0) return { value: String(minutes), unit: 'min' }
-  return { value: `${hours}:${minutes.toString().padStart(2, '0')}`, unit: 'h' }
+  // "19 h 16 m" — not "19:16 h" (that reads as 19.16 hours).
+  return { value: `${hours} h ${minutes.toString().padStart(2, '0')} m`, unit: '' }
 }
 
 function energyParts(wh: number): { value: string; unit: string } {
@@ -236,5 +246,6 @@ function percent(value: number, limit: number): number {
 function checkValue(value: number, limit: number, id: string): string {
   if (id === 'slope') return `${value.toFixed(1)}° / ${limit.toFixed(1)}°`
   if (id === 'energy') return `${formatEnergy(value)} / ${formatEnergy(limit)}`
+  // value/limit are hours — show as "19.2 h / 48 h", matching formatDuration style
   return `${value.toFixed(1)} h / ${limit.toFixed(0)} h`
 }
