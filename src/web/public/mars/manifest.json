@@ -1,13 +1,26 @@
 {
   "region": "jezero",
   "label": "Jezero Crater",
-  "bbox": [76.99743706146, 17.58050480819, 78.58293305797, 19.29018700687],
-  "center": [77.58, 18.44],
+  "bbox": [
+    76.99743706146,
+    17.58050480819,
+    78.58293305797,
+    19.29018700687
+  ],
+  "center": [
+    77.58,
+    18.44
+  ],
   "basemap": {
     "file": "basemap.pmtiles",
     "type": "raster",
     "tileSize": 256,
-    "bounds": [77.1604655, 18.2110274, 77.6991776, 18.7211945],
+    "bounds": [
+      77.1604655,
+      18.2110274,
+      77.6991776,
+      18.7211945
+    ],
     "attribution": "USGS Astrogeology Science Center / NASA MRO CTX"
   },
   "dem": {
@@ -26,7 +39,54 @@
       "product": "M20_JezeroCrater_CTXDEM_20m.tif",
       "pds_archive": "Mars Reconnaissance Orbiter / Context Camera (CTX)"
     },
-    { "name": "NASA Mars Trek", "url": "https://trek.nasa.gov/mars/" },
-    { "name": "NASA Planetary Data System", "url": "https://pds.nasa.gov/" }
-  ]
+    {
+      "name": "NASA Mars Trek",
+      "url": "https://trek.nasa.gov/mars/"
+    },
+    {
+      "name": "NASA Planetary Data System",
+      "url": "https://pds.nasa.gov/"
+    },
+    {
+      "name": "MRO CRISM MTRDR OLINDEX3",
+      "url": "https://pds.nasa.gov/ds-view/pds/viewDataset.jsp?dsid=MRO-M-CRISM-5-RDR-MPTARGETED-V1.0",
+      "product": "HRL000040FF_07_SR183J_MTR3",
+      "instrument": "CRISM",
+      "producer": "Johns Hopkins University Applied Physics Laboratory"
+    }
+  ],
+  "crism": {
+    "file": "crism/olindex3.png",
+    "band": "OLINDEX3",
+    "product_id": "HRL000040FF_07_SR183J_MTR3",
+    "bounds": [
+      77.27556,
+      18.27674,
+      77.561134,
+      18.732427
+    ],
+    "coordinates": [
+      [
+        77.27556,
+        18.732427
+      ],
+      [
+        77.561134,
+        18.732427
+      ],
+      [
+        77.561134,
+        18.27674
+      ],
+      [
+        77.27556,
+        18.27674
+      ]
+    ],
+    "stretch": [
+      0.08094,
+      0.17168
+    ],
+    "attribution": "CRISM MTRDR, NASA PDS / Johns Hopkins APL"
+  }
 }

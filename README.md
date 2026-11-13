@@ -2,10 +2,10 @@
 
 **A dual-profile traverse and survival planner for Mars.**
 
-Draw a route on Mars, choose a rover or a suited astronaut, and get a verdict:
-distance, climb, traverse time, energy, maximum slope, pass/fail, and the exact
-segment that breaks the limit. If the route fails, Martialoy searches the DEM for
-a least-cost contingency path.
+Plan a traverse across Jezero Crater for a Perseverance-class rover or a suited
+explorer. Martialoy samples terrain elevation along the route, estimates slope,
+time and energy, reports pass/fail checks, and can search for a lower-cost
+contingency route.
 
 > NASA Space Apps Challenge 2026, Bangladesh edition  
 > Theme: *The Next Frontier*  
@@ -17,127 +17,127 @@ a least-cost contingency path.
 
 | Layer | State |
 |---|---|
-| Web UI (MapLibre, draw tool, elevation profile, survival card, assumptions) | **Working** |
-| Demo engine (synthetic Jezero-like terrain, full verdict + Dijkstra) | **Working** |
-| Python compute engine (`route.py`, `graph.py`, `dem.py`, FastAPI) | **Working, unit-tested** |
-| Local PMTiles basemap + regional COG DEM | **Not cached in this checkout** |
-| Real-data end-to-end run | Waiting on `cache/mars/` payloads |
+| Landing page and three-step route workflow | **Working** |
+| MapLibre map, local CTX basemap, route drawing and examples | **Working** |
+| Real Jezero DEM and FastAPI route engine | **Available in this checkout** |
+| Rover and suited-explorer profiles, assumptions and survival checks | **Working** |
+| Least-cost contingency route | **Available through the local API** |
+| Demo engine | **Fallback when the API or DEM is unavailable** |
 
-The UI is honest about this: the header shows **Demo terrain** until a real COG
-is connected. The frontend falls back to the demo engine when the API is absent
-or the DEM is not cached, instead of showing a dead screen.
+The checkout includes the Jezero DEM, PMTiles basemap, and manifests under
+`cache/mars/`. The API uses the local DEM when it is running. Without the API,
+the web client falls back to its clearly labelled synthetic demo engine.
 
 ## What it does
 
-```
-choose Human or Rover
-        |
-draw a polyline on the local basemap
-        |
-sample the DEM every 25 m -> slope profile -> time + energy -> verdict
-        |
-survival card: distance, time, energy, max slope, PASS/FAIL, all assumptions
-        |
-on FAIL: name the failing segment and overage, offer a least-cost detour
-```
+The app guides the user through three screens:
 
-- **Same engine, two profiles.** There is no `if human` branch in the physics.
-  A profile is a set of constants in TOML: mass, speed, power, efficiency, slope
-  limit, energy budget, duration budget and derate.
-- **Two human ledgers.** Suit electrical energy (Wh) and metabolic effort (kcal)
-  are reported separately and never added together.
-- **Every assumption on screen.** The model table shows value, unit and source
-  for each constant. Nothing important is buried in code.
-- **Offline by design.** Basemap tiles and the DEM are local files. The app does
-  not call a tile server or terrain API at runtime.
+1. **Select a route.** Choose Rover or Human, load an example route, or draw a
+   route on the Jezero map. Finish the route to continue.
+2. **Review calculations.** See distance, elevation gain, slope, travel time,
+   and the separate energy estimates.
+3. **Check the journey.** Review pass/fail checks, the limiting route segment,
+   and a contingency route when the API finds one.
 
-## Quick start (UI only, demo terrain)
+- **Shared calculation engine.** Rover and Human profiles use the same route
+  physics with different profile values stored in TOML.
+- **Separate human energy ledgers.** Suit electrical energy (Wh) and estimated
+  metabolic effort (kcal) are reported separately.
+- **Visible assumptions.** The UI shows the values, units, and sources used by
+  each profile. Engineering estimates are labelled as estimates.
+- **Local map data.** The map and DEM are served from the project checkout; map
+  tiles and elevation data are not fetched from a remote tile service at runtime.
+- **Contingency search.** When requested, the API uses Dijkstra search over a
+  terrain grid, then evaluates the resulting route with the same route engine.
+
+## Quick start (web UI with demo fallback)
 
 Requires Node.js 20+.
 
-```bash
+```powershell
 cd src/web
 npm install
 npm run dev
 ```
 
-Open <http://127.0.0.1:5173>. In the empty survival card, choose:
+Open <http://127.0.0.1:5173>. The app can use its demo engine if the local API is
+not running. From the route screen, try the **Failing example** and **Safe
+example** buttons, or draw a route on the map and select **Finish route**.
 
-- **Try a failing traverse** — rover exceeds 20° on the crater rim.
-- **Try a safe traverse** — short basin route that passes both profiles.
+Build the web client:
 
-The failing preset is a 2.24 km direct traverse with a 24.7° maximum slope. The
-contingency search returns a 3.26 km detour with a 16.7° maximum slope and a PASS
-verdict on the demo terrain.
-
-Production build:
-
-```bash
+```powershell
 cd src/web
 npm run build
 ```
 
-## Full local stack (real DEM)
+## Full local stack (real Jezero terrain)
 
-### 1. Cache the Mars data
-
-The repository does not ship the basemap or DEM. Follow
-[`docs/data.md`](docs/data.md) and [`cache/mars/README.md`](cache/mars/README.md):
+The current checkout includes the local map and terrain files. First install
+and run the Python API in one terminal from the repository root:
 
 ```powershell
-Copy-Item cache/mars/manifest.example.json cache/mars/manifest.json
-# put basemap.pmtiles and jezero_dem.tif in cache/mars/
-python scripts/check_data.py
-```
-
-`check_data.py` validates the PMTiles magic bytes, bbox, CRS, latitude
-convention, nodata and resolution. It refuses a planetographic DEM, because that
-would silently shift routes and corrupt slope verdicts.
-
-### 2. Install the Python engine
-
-Requires Python 3.11+ (the profile loader uses `tomllib`).
-
-```bash
+# Run from the repository root.
 python -m venv .venv
-.venv\Scripts\activate        # Windows
-# source .venv/bin/activate   # macOS/Linux
+.venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-`rasterio` is only needed for the COG adapter and the data checker. The pure
-route/graph tests run on a bare Python install.
-
-### 3. Run the API
-
-```bash
 uvicorn src.compute.api:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Or serve the built web app and the API from one process:
+In a second terminal, start the web client:
 
-```bash
-cd src/web && npm run build && cd ../..
+```powershell
+# In a second terminal, from the repository root:
+cd src/web
+npm install
+npm run dev
+```
+
+Open <http://127.0.0.1:5173>. Vite proxies `/api` to the local FastAPI service
+and serves the data in `cache/mars/` under `/mars`.
+
+To serve the production build and API from one process:
+
+```powershell
+# From the repository root:
+cd src/web
+npm run build
+cd ..\..
+.venv\Scripts\activate
 uvicorn src.compute.api:app --host 127.0.0.1 --port 8000
 ```
 
-Open <http://127.0.0.1:8000>. FastAPI mounts `src/web/dist` at `/` and
-`cache/mars` at `/mars`. When the Vite dev server is running, it proxies `/api`
-and `/mars` to port 8000.
+Then open <http://127.0.0.1:8000>. FastAPI serves the built web client and the
+local Mars files.
 
-### 4. Verify offline
+## Local Mars data
 
-Build the app, start FastAPI, disable the network adapter, reload. The basemap
-should render and the header should read **Local DEM**, not **Demo terrain**.
+| Layer | Product used | Source |
+|---|---|---|
+| Basemap | Jezero CTX orthorectified image mosaic, 6 m/pixel (`JEZ_ctx_B_soc_008_orthoMosaic_6m_Eqc_latTs0_lon0.tif`, exported to `basemap.pmtiles`) | [USGS Astrogeology Science Center](https://astrogeology.usgs.gov/search/map/Mars/Mars2020/JEZ_ctx_B_soc_008_orthoMosaic_6m_Eqc_latTs0_lon0); NASA MRO Context Camera (CTX) |
+| Elevation | Mars 2020 Jezero CTX DEM mosaic, 20 m/pixel (`M20_JezeroCrater_CTXDEM_20m.tif`, prepared as `jezero_dem.tif`) | [USGS Astrogeology Science Center](https://astrogeology.usgs.gov/search/map/mars_2020_science_investigation_ctx_dem_mosaic) |
+
+The basemap covers part of Jezero, not the whole crater. Its current footprint is
+approximately 77.1605–77.6992°E and 18.2110–18.7212°N. The DEM covers a larger
+area and is used for route elevation and slope calculations. Both files and the
+active manifests are in `cache/mars/`; see [`docs/data.md`](docs/data.md) for
+processing notes and [`docs/references.md`](docs/references.md) for citations
+and model assumptions.
+
+Validate the local data configuration with:
+
+```powershell
+python scripts/check_data.py
+```
 
 ## API
 
 | Method | Path | Purpose |
 |---|---|---|
-| `GET` | `/api/health` | Engine status, region, cached-DEM availability |
-| `GET` | `/api/profiles` | Rover and human constants, formula and full citation table |
-| `POST` | `/api/route` | Sample a drawn polyline and return the verdict payload |
-| `POST` | `/api/contingency` | Least-cost path between start and end, then the same verdict code |
+| `GET` | `/api/health` | Engine status, region and DEM availability |
+| `GET` | `/api/profiles` | Rover and Human profile constants and citations |
+| `POST` | `/api/route` | Evaluate a drawn route and return the result |
+| `POST` | `/api/contingency` | Search for and evaluate a least-cost route |
 
 Example route request:
 
@@ -151,14 +151,15 @@ Example route request:
 }
 ```
 
-The full response contract is in [`docs/PLAN.md`](docs/PLAN.md) section 6 and
-[`src/web/src/types.ts`](src/web/src/types.ts).
+Coordinates are `[longitude, latitude]` using Mars planetocentric latitude and
+east longitude. The response contract is documented in
+[`docs/PLAN.md`](docs/PLAN.md) and [`src/web/src/types.ts`](src/web/src/types.ts).
 
 ## Model
 
-```
+```text
 ds_i    = distance between adjacent samples
-dh_i    = h_i - h_(i-1)
+ dh_i   = h_i - h_(i-1)
 slope_i = atan2(dh_i, ds_i)
 
 v_i     = v_max * clamp(1 - derate * max(slope_i, 0) / slope_limit,
@@ -169,137 +170,109 @@ E_Wh    = P_base * sum(t_i)/3600
           + (m * g * climb_m) / (eta_drive * 3600)
 
 E_kcal  = (P_metabolic * sum(t_i)/3600
-           + (m * g * climb_m) / (eta_body * 3600)) * 0.860421
+           + (m * g * climb_m) / eta_body) * 0.860421 / 3600
 ```
 
-- Mars is a sphere of radius **3,389,500 m**.
-- Gravity is **3.721 m/s²**.
-- Sampling spacing is fixed (25 m by default), and smoothing is off by default.
-- `climb_m` counts positive elevation change only; descents are not recovered.
-- Slope is computed from adjacent route samples, not from pixel gradients, so a
-  synthetic ramp and a real drawn route follow the same code path.
-- DEM nodata is never treated as zero elevation. A gap produces a warning and no
-  slope is inferred across it.
-
-Every constant, source and limitation is documented in
-[`docs/references.md`](docs/references.md). Values marked **engineering estimate**
-are modelling choices, not mission specifications.
+- Mars radius and gravity are documented in [`docs/references.md`](docs/references.md).
+- Route spacing is profile-configurable (25 m by default); smoothing is off by
+  default.
+- `climb_m` counts positive elevation change only; descents do not recover energy.
+- DEM nodata is never treated as zero elevation. The engine warns rather than
+  inferring a slope across a data gap.
+- The model is a planning aid. Values such as drivetrain efficiency, speed
+  derating, and human metabolic rate include engineering estimates.
 
 ## Least-cost contingency
 
-If the drawn route fails, the engine crops the DEM around the start/end bbox plus
-a 1 km buffer, resamples to a working grid, and runs Dijkstra over 8 neighbours:
+The API crops the DEM around the route endpoints with a 1 km buffer, resamples it
+to a working grid, then searches eight-connected neighbours using Dijkstra's
+algorithm:
 
-```
+```text
 cost = ds * (1 + 6 * (|slope| / slope_limit)^2)
 ```
 
-Edges above the profile slope limit are removed. If no path exists, the search is
-retried with those edges allowed and the response is flagged `relaxed`, so the UI
-can warn instead of pretending the route is safe. The resulting polyline is
-re-sampled by the same route code as a hand-drawn line.
+Edges above the profile slope limit are excluded first. If no path exists, the
+search retries with those edges allowed and flags the result as relaxed. The
+returned path is evaluated by the same route engine used for a drawn route.
 
 ## Tests
 
-```bash
+```powershell
 python -m unittest discover -s tests -v
 npm --prefix src/web run typecheck
 ```
 
-Current coverage:
-
-- **Synthetic 10° ramp** at 30 m spacing: every slope 10° ± 0.01, distance
-  3,570 m, climb 629.5 m, slope check passes.
-- **25° ramp**: rover slope check fails, with a known +5.0° overage.
-- **Nodata propagation**: no fabricated slope or climb across a gap.
-- **Human ledger**: metabolic kcal ledger present and separate from suit Wh.
-- **Bilinear COG sampler**: pixel centres, interpolation midpoint, edge pixels and
-  nodata propagation.
-- **Dijkstra wall**: path uses the northern gap when the wall is blocked.
-- **No-gap wall**: relaxed retry is flagged instead of returning a fake pass.
-- **API contract**: health, profiles, route payload keys, contingency payload,
-  unknown-profile 422.
-
-API tests are skipped automatically when FastAPI is not installed; install
-`requirements-dev.txt` to run them.
+The suite covers route calculations, DEM sampling and nodata, Dijkstra
+contingency behavior, and API response contracts. Install
+`requirements-dev.txt` for the Python test dependencies.
 
 ## Repository layout
 
-```
+```text
 .
-├── LICENSE                     Apache-2.0
 ├── README.md
-├── requirements.txt            fastapi, uvicorn, pydantic, numpy, rasterio
-├── cache/mars/                 local payloads (git-ignored) + manifest example
-│   ├── README.md
-│   └── manifest.example.json
+├── requirements.txt              Python API and raster dependencies
+├── cache/mars/                   Local DEM, CTX mosaic, PMTiles and manifests
 ├── docs/
-│   ├── PLAN.md                 architecture, contracts, phases, risks
-│   ├── data.md                 data pipeline and audit trail
-│   └── references.md           every constant -> source
-├── scripts/check_data.py       validates manifest, bbox, CRS, nodata, PMTiles
+│   ├── PLAN.md                   Architecture and API contracts
+│   ├── data.md                   Data processing notes
+│   ├── references.md             Model values and sources
+│   └── status_audit.md           Local project audit
+├── scripts/
+│   ├── check_data.py             Validate the local Mars data configuration
+│   └── prepare_dem.py            Prepare the DEM for the route engine
 ├── src/
-│   ├── compute/
-│   │   ├── api.py              FastAPI app
-│   │   ├── dem.py              COG adapter (lazy rasterio)
-│   │   ├── geo.py              spherical geometry + fixed-spacing sampler
-│   │   ├── graph.py            Dijkstra least-cost path
-│   │   ├── route.py            slope, motion, energy, verdict
-│   │   └── profiles/           rover.toml, human.toml
-│   └── web/                    Vite + React + TypeScript + MapLibre + PMTiles
-└── tests/
-    ├── test_route.py
-    ├── test_graph.py
-    └── test_api.py
+│   ├── compute/                  FastAPI, route engine, DEM and graph search
+│   └── web/                      React, TypeScript, Vite and MapLibre client
+└── tests/                        Python route, graph, DEM and API tests
 ```
 
-## Data and attribution
+## Data attribution
 
-| Data | Use | Source |
-|---|---|---|
-| Regional basemap | Visual context, offline tiles | [NASA Mars Trek](https://trek.nasa.gov/mars/) |
-| DEM | Elevation, slope, least-cost path | [NASA Planetary Data System](https://pds.nasa.gov/) |
-| Imagery (stretch) | Roughness context | HiRISE / PDS |
-| Mineral maps (stretch) | Science layer | CRISM / PDS |
-| Rover specifications | Rover profile | NASA Mars 2020 mission pages |
-| Spacesuit / metabolic references | Human profile | NASA human spaceflight references |
+The local basemap and elevation mosaic are products of the USGS Astrogeology
+Science Center using Mars Reconnaissance Orbiter Context Camera (CTX) data.
+Credit USGS Astrogeology Science Center and NASA/JPL. Individual products have
+their own usage and citation terms; consult the linked product pages before
+redistributing derived files.
 
-NASA data are generally public domain, but each product has its own citation and
-redistribution terms. Check the product page before committing a derived export.
-The app footer credits NASA Mars Trek and PDS.
+Model constants and mission references are listed in
+[`docs/references.md`](docs/references.md). Estimates are identified there and
+in the app, and should not be presented as measured mission specifications.
 
 ## Limitations
 
 This is a hackathon planning model, **not mission-grade or medical advice**. It
-does not model wheel slip, sand traps, thermal duty cycles, battery charge curves,
-radiation, communication windows, weather, or human physiology beyond a constant
-metabolic rate. Slope verdicts depend on sample spacing; spacing is shown in the
-UI and in every result. See `docs/references.md` for the full list.
+does not model wheel slip, sand traps, thermal duty cycles, battery charge
+curves, radiation, communication windows, weather, or human physiology beyond a
+constant metabolic rate. Slope verdicts depend on route sampling spacing, which
+is shown in the UI and result.
 
 ## Use of AI
 
-Required by the Space Apps rules. This table will be updated as work continues.
+Required by the Space Apps rules. Record the tools used by the team in this
+table before submission.
 
 | Tool | Used for | Notes |
 |---|---|---|
-| OpenCode + DeepSeek | UI scaffold, compute-engine implementation, tests, documentation | All generated code reviewed and tested by the team; NASA values verified against the linked sources where possible. Draft engineering estimates remain explicitly labelled. |
+| OpenCode + DeepSeek | UI scaffold, compute engine, tests and documentation | Generated code was reviewed by the team; published NASA values were checked against linked sources where possible. Engineering estimates remain labelled. |
 
 ## Team
 
 | Member | Role | Responsibility |
 |---|---|---|
-| Md. Imran Hasan | Team Lead | Architecture, Git workflow and code review, integration testing, deadlines, final pitch |
-| Afrazur Rahman | Technical | Map interface, route drawing, hazard overlay, survival card, offline deployment, GitHub repo |
-| Md. Masum Parvej | Data Engine | DEM processing, slope, segmentation, energy model, explorer profiles |
-| Maksumul Haque | Science and Research | Reference constants and citations, documentation, project page, videos |
+| Md. Imran Hasan | Team Lead | Architecture, Git workflow and code review, integration, deadlines and final pitch |
+| Afrazur Rahman | Technical | Map interface, route drawing, hazard overlay, survival card and offline deployment |
+| Md. Masum Parvej | Data Engine | DEM processing, slope, segmentation, energy model and explorer profiles |
+| Maksumul Haque | Science and Research | Reference constants, citations, documentation, project page and videos |
 
 ## License
 
 [Apache License 2.0](LICENSE). You may use, modify and distribute the code with
-attribution. NASA data remain subject to their own terms.
+attribution. NASA and USGS data remain subject to their product-specific terms.
 
 ## Acknowledgements
 
-Data and mission information from NASA and its open data programs (Mars Trek,
-HiRISE, CRISM, Planetary Data System). Built for the NASA International Space
-Apps Challenge 2026.
+Built for the NASA International Space Apps Challenge 2026. We acknowledge the
+USGS Astrogeology Science Center, NASA/JPL, the Mars Reconnaissance Orbiter CTX
+team, and the open-source software projects used to build Martialoy.

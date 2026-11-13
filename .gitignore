@@ -24,3 +24,10 @@ Thumbs.db
 # Local env
 .env
 .env.local
+
+# Local CRISM source cube and generated development overlay
+cache/mars/crism/*.img
+cache/mars/crism/*.lbl
+cache/mars/crism/*.hdr
+cache/mars/crism/*.xml
+cache/mars/crism/olindex3.png

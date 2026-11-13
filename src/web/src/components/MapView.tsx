@@ -145,6 +145,8 @@ export function MapView({
   const markersRef = useRef<Marker[]>([])
   const coordRef = useRef<HTMLSpanElement>(null)
   const [ready, setReady] = useState(false)
+  const [crismReady, setCrismReady] = useState(false)
+  const [crismVisible, setCrismVisible] = useState(false)
 
   const live = useRef({ points, result, contingency, hover, onAddPoint, onUndo })
   live.current = { points, result, contingency, hover, onAddPoint, onUndo }
@@ -264,6 +266,10 @@ export function MapView({
             attribution?: string
             bounds?: [number, number, number, number]
           }
+          crism?: {
+            file?: string
+            coordinates?: [[number, number], [number, number], [number, number], [number, number]]
+          }
         }
         const file = manifest.basemap?.file
         if (!file) throw new Error('no basemap file')
@@ -286,6 +292,29 @@ export function MapView({
           },
           'graticule',
         )
+        const crism = manifest.crism
+        if (crism?.file && crism.coordinates?.length === 4) {
+          const crismUrl = `${window.location.origin}/mars/${crism.file}`
+          const crismProbe = await fetch(crismUrl, { headers: { Range: 'bytes=0-1' } })
+          if (crismProbe.ok) {
+            m.addSource('crism-olivine', {
+              type: 'image',
+              url: crismUrl,
+              coordinates: crism.coordinates,
+            })
+            m.addLayer(
+              {
+                id: 'crism-olivine',
+                type: 'raster',
+                source: 'crism-olivine',
+                layout: { visibility: 'none' },
+                paint: { 'raster-opacity': 0.78, 'raster-resampling': 'linear' },
+              },
+              'graticule',
+            )
+            setCrismReady(true)
+          }
+        }
         const bounds = manifest.basemap?.bounds
         if (bounds && bounds.every(Number.isFinite)) {
           // The PMTiles archive covers only part of the larger DEM planning
@@ -368,6 +397,12 @@ export function MapView({
       mapRef.current = null
     }
   }, [])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !crismReady || !map.getLayer('crism-olivine')) return
+    map.setLayoutProperty('crism-olivine', 'visibility', crismVisible ? 'visible' : 'none')
+  }, [crismReady, crismVisible])
 
   const fittedNonce = useRef(0)
 
@@ -487,6 +522,14 @@ export function MapView({
             )}
           </div>
         )}
+        {crismReady && crismVisible && (
+          <div className="crism-legend">
+            <strong>OLINDEX3 · spectral index</strong>
+            <div className="crism-gradient" />
+            <div className="crism-range"><span>0.081 · lower</span><span>0.172 · higher</span></div>
+            <small>Olivine-like signal, not a confirmed mineral map. Partial scene coverage.</small>
+          </div>
+        )}
       </div>
 
       <div className="map-toolbar map-toolbar-below">
@@ -523,6 +566,12 @@ export function MapView({
             {points.length} {points.length === 1 ? 'vertex' : 'vertices'}
           </span>
         </div>
+        {crismReady && (
+          <label className="crism-toggle">
+            <input type="checkbox" checked={crismVisible} onChange={(event) => setCrismVisible(event.target.checked)} />
+            <span>CRISM olivine index</span>
+          </label>
+        )}
       </div>
     </div>
   )

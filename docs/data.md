@@ -149,3 +149,15 @@ The footer and manifest must credit NASA Mars Trek and PDS. If a specific
 instrument team or product requires a citation, add it to the manifest sources
 and to `docs/references.md`. NASA data are generally public domain, but always
 check the product's own terms before redistributing a derived export.
+
+
+## CRISM OLINDEX3 context layer
+
+The local map uses CRISM MTRDR product `HRL000040FF_07_SR183J_MTR3`. The PDS
+cube and label files are kept under `cache/mars/crism/`; the reproducible
+converter is `scripts/prepare_crism_overlay.py`. It extracts band 14
+(`OLINDEX3`) from the 60-band float32 BSQ cube to a transparent PNG. The display
+stretch uses the valid-pixel 2nd–98th percentiles (0.08094–0.17168). The
+manifest footprint shows partial coverage near Jezero. OLINDEX3 is an
+olivine-like spectral parameter, not a definitive mineral identification.
+The generated asset is copied to `src/web/public/mars/crism/` for a static build.

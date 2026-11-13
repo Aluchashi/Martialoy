@@ -4095,3 +4095,43 @@ body { background: var(--bg-base); }
 .button:disabled,
 .btn:disabled,
 .ui-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+
+/* CRISM OLINDEX3 spectral context layer */
+.crism-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 10px;
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+}
+.crism-toggle input { accent-color: #e18b45; }
+.crism-legend {
+  position: absolute;
+  right: 12px;
+  bottom: 42px;
+  z-index: 5;
+  width: 225px;
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: rgba(14, 15, 18, .9);
+  color: var(--muted);
+  font-size: 11px;
+}
+.crism-legend strong { display: block; margin-bottom: 7px; color: var(--text); }
+.crism-gradient {
+  height: 9px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #36215f, #276a8c, #4cb477, #f5d45d);
+}
+.crism-range {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 10px;
+}
+.crism-legend small { display: block; margin-top: 7px; line-height: 1.45; }
