@@ -48,9 +48,18 @@
       "url": "https://pds.nasa.gov/"
     },
     {
-      "name": "MRO CRISM MTRDR OLINDEX3",
+      "name": "MRO CRISM MTRDR OLINDEX3 composite",
       "url": "https://pds.nasa.gov/ds-view/pds/viewDataset.jsp?dsid=MRO-M-CRISM-5-RDR-MPTARGETED-V1.0",
-      "product": "HRL000040FF_07_SR183J_MTR3",
+      "products": [
+        "HRL000040FF_07_SR183J_MTR3",
+        "FRT00021DA6_07_SR166J_MTR3",
+        "FRT0001FB74_07_SR166J_MTR3",
+        "FRT0001ECBA_07_SR166J_MTR3",
+        "FRT000066A4_07_SR166J_MTR3",
+        "FRT000047A3_07_SR166J_MTR3",
+        "FRT00005850_07_SR167J_MTR3",
+        "FRT00005C5E_07_SR166J_MTR3"
+      ],
       "instrument": "CRISM",
       "producer": "Johns Hopkins University Applied Physics Laboratory"
     }
@@ -58,35 +67,45 @@
   "crism": {
     "file": "crism/olindex3.png",
     "band": "OLINDEX3",
-    "product_id": "HRL000040FF_07_SR183J_MTR3",
+    "product_ids": [
+      "HRL000040FF_07_SR183J_MTR3",
+      "FRT00021DA6_07_SR166J_MTR3",
+      "FRT0001FB74_07_SR166J_MTR3",
+      "FRT0001ECBA_07_SR166J_MTR3",
+      "FRT000066A4_07_SR166J_MTR3",
+      "FRT000047A3_07_SR166J_MTR3",
+      "FRT00005850_07_SR167J_MTR3",
+      "FRT00005C5E_07_SR166J_MTR3"
+    ],
     "bounds": [
-      77.27556,
-      18.27674,
-      77.561134,
-      18.732427
+      77.19196708799255,
+      18.11236278845637,
+      77.86658733434392,
+      18.733312949299105
     ],
     "coordinates": [
       [
-        77.27556,
-        18.732427
+        77.19196708799255,
+        18.733312949299105
       ],
       [
-        77.561134,
-        18.732427
+        77.86658733434392,
+        18.733312949299105
       ],
       [
-        77.561134,
-        18.27674
+        77.86658733434392,
+        18.11236278845637
       ],
       [
-        77.27556,
-        18.27674
+        77.19196708799255,
+        18.11236278845637
       ]
     ],
     "stretch": [
       0.08094,
       0.17168
     ],
+    "composite_method": "18 m grid; valid overlapping scene values averaged",
     "attribution": "CRISM MTRDR, NASA PDS / Johns Hopkins APL"
   }
 }

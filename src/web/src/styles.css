@@ -3229,12 +3229,13 @@ body {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: transparent;
+  background: var(--bg-base);
   border-bottom: 1px solid var(--border-subtle);
 }
 .app-header.app-header-home {
   margin-bottom: -64px;
   border-bottom: 0;
+  background: transparent;
 }
 .app-header-inner {
   display: flex;

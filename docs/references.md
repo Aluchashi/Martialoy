@@ -53,7 +53,7 @@ Last reviewed: **2026-10-20**. This is a hackathon model, not a mission plan.
 | Basemap | NASA Mars Trek regional mosaic, exported to PMTiles | [NASA Mars Trek](https://trek.nasa.gov/mars/) | Cached locally in `cache/mars/`; not downloaded at runtime |
 | DEM | Jezero stereo DTM / Mars Trek blended DEM, COG | [NASA PDS](https://pds.nasa.gov/) | Must be placed in `cache/mars/`; see `docs/data.md` |
 | Imagery context (stretch) | HiRISE | [NASA PDS](https://pds.nasa.gov/) | Not part of the MVP |
-| Mineral context layer | CRISM MTRDR OLINDEX3, product `HRL000040FF_07_SR183J_MTR3` | [NASA PDS Geosciences Node](https://pds-geosciences.wustl.edu/mro/mro-m-crism-5-rdr-mptargeted-v1/) | Partial-coverage spectral index; not a confirmed mineral detection |
+| Mineral context layer | CRISM MTRDR OLINDEX3 composite from eight Jezero observations | [NASA PDS Geosciences Node](https://pds-geosciences.wustl.edu/mro/mro-m-crism-5-rdr-mptargeted-v1/) | Partial-coverage spectral index; not a confirmed mineral detection |
 
 ## Model equations
 

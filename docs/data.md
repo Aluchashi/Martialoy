@@ -153,11 +153,22 @@ check the product's own terms before redistributing a derived export.
 
 ## CRISM OLINDEX3 context layer
 
-The local map uses CRISM MTRDR product `HRL000040FF_07_SR183J_MTR3`. The PDS
-cube and label files are kept under `cache/mars/crism/`; the reproducible
-converter is `scripts/prepare_crism_overlay.py`. It extracts band 14
-(`OLINDEX3`) from the 60-band float32 BSQ cube to a transparent PNG. The display
-stretch uses the valid-pixel 2nd–98th percentiles (0.08094–0.17168). The
-manifest footprint shows partial coverage near Jezero. OLINDEX3 is an
-olivine-like spectral parameter, not a definitive mineral identification.
-The generated asset is copied to `src/web/public/mars/crism/` for a static build.
+The local map combines eight CRISM MTRDR observations stored in
+`cache/mars/crism/`:
+
+- `HRL000040FF_07_SR183J_MTR3`
+- `FRT00021DA6_07_SR166J_MTR3`
+- `FRT0001FB74_07_SR166J_MTR3`
+- `FRT0001ECBA_07_SR166J_MTR3`
+- `FRT000066A4_07_SR166J_MTR3`
+- `FRT000047A3_07_SR166J_MTR3`
+- `FRT00005850_07_SR167J_MTR3`
+- `FRT00005C5E_07_SR166J_MTR3`
+
+Run `python scripts/prepare_crism_overlay.py` to extract band 14 (`OLINDEX3`)
+from each 60-band float32 BSQ cube and mosaic valid values on a shared 18 m
+grid. Valid observations are averaged where scenes overlap. The established
+0.08094–0.17168 color stretch is retained; low index values are rendered more
+transparently so the basemap remains visible. This is an olivine-like spectral
+parameter, not a definitive mineral identification. The generated PNG is copied
+to `src/web/public/mars/crism/` for static builds.
